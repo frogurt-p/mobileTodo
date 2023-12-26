@@ -13,6 +13,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-native-fontawesome": "^0.3.0",
+    "@tanstack/react-query": "^5.14.6",
     "@types/react-native-sqlite-storage": "^6.0.5",
     "dayjs": "^1.11.10",
     "react": "18.2.0",

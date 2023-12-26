@@ -6,12 +6,16 @@
  */
 
 import React from 'react';
-import MainComponent from './src/presentation/pages/main/MainComponent';
-import mainViewmodel from './src/presentation/pages/main/mainViewmodel';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MainPage } from './src/presentation/pages/main';
 
 function App(): React.JSX.Element {
-  const viewmodel = mainViewmodel()
-  return <MainComponent viewmodel={viewmodel} />
+  const client = new QueryClient()
+  return <QueryClientProvider client={client}>
+    <MainPage/>
+  </QueryClientProvider>
+  
+  
 }
 
 

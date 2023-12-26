@@ -1,8 +1,16 @@
-import { SQLiteDatabase, enablePromise, openDatabase } from "react-native-sqlite-storage";
+import { ResultSet, SQLiteDatabase, enablePromise, openDatabase } from "react-native-sqlite-storage";
 import { TodoModel } from "../domain/models/todo";
 import dayjs from "dayjs";
 
 enablePromise(true)
+
+const getListData = <T>(result:[ResultSet]): Array<T> => {
+    const data:T[] = []
+    for (let index = 0; index < result[0].rows.length; index++) {
+        data.push(result[0].rows.item(index))
+    }
+    return data
+}
 
 export const getDBConnection = async () => {
     return openDatabase({name : "todo.db", location: 'default'})
@@ -18,15 +26,20 @@ export const createTable = async (db:SQLiteDatabase) => {
 
     const taskTableQuery = `
     CREATE TABLE IF NOT EXISTS task (
-        taskId TEXT PRIMARY KEY UNIQUE,
-        todoId TEXT NOT NULL,
+        taskId INTEGER NOT NULL,
+        todoId INTEGER NOT NULL,
         taskDescription TEXT NOT NULL,
         taskChecked TEXT,
+        PRIMARY KEY (taskId, todoId),
         FOREIGN KEY (todoId)
             REFERENCES todo(todoId)
             ON DELETE CASCADE
             ON UPDATE NO ACTION
     );`
+    
+    //Reset table
+    // await db.executeSql(`DROP TABLE todo`)
+    // await db.executeSql(`DROP TABLE task`)
 
     await db.executeSql(todoTableQuery)
     await db.executeSql(taskTableQuery)
@@ -37,7 +50,17 @@ export const getTodo = async (db:SQLiteDatabase): Promise<TodoModel.Response.Lis
         const todo: TodoModel.Response.List = []
         const results = await db.executeSql(`SELECT * FROM todo`);
         for (let index = 0; index < results[0].rows.length; index++) {
-            todo.push(results[0].rows.item(index))
+
+            const todoResult = results[0].rows.item(index)
+            const taskResults = await db.executeSql(`SELECT * FROM task WHERE todoid = ${todoResult.todoId}`)
+
+            const taskData = getListData<TodoModel.Response.TaskData>(taskResults)
+            
+            const todoReturn = {
+                ...todoResult,
+                task: taskData
+            }
+            todo.push(todoReturn)
         }
 
         return todo
@@ -56,12 +79,24 @@ export const createTodo = async (db:SQLiteDatabase): Promise<Boolean> => {
         } 
         
         const curDate = dayjs().format('DD-MM-YYYY HH:mm:ss')
-        const createTable = await db.executeSql(`INSERT INTO todo VALUES(${currentId}, '${curDate}', 'placeholder')`)
-        
-        return createTable[0].rowsAffected >= 1 ? true : false
+        const createTable = await db.executeSql(`INSERT INTO todo VALUES(${currentId}, '${curDate}', 'New Todo')`)
+        const createTask = await db.executeSql(`INSERT INTO task VALUES(1, ${currentId}, 'New Task', 'false')`)
+
+        return (createTable[0].rowsAffected >= 1 && createTask[0].rowsAffected >= 1) ? true : false
 
     } catch (error) {
         console.error(error)
         throw new Error('Failed creating todo')
+    }
+}
+
+export const nukeTables = async (db:SQLiteDatabase): Promise<Boolean> => {
+    try {
+        await db.executeSql(`DELETE FROM todo`)
+        await db.executeSql(`DELETE FROM task`)
+        return true
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed truncating tables')
     }
 }

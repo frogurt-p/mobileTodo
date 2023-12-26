@@ -14,4 +14,8 @@ export default class TodoUsecase implements TodoRepository {
         return this.repository.createTodo()
     }
 
+    removeTables(): Promise<Boolean> {
+        return this.repository.removeTables()
+    }
+
 }

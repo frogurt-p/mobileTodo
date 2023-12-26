@@ -3,7 +3,7 @@
 const colorScheme = {
     darkBackground: '#121212',
     darkTypography: '#fff',
-    lightBackground: '#fafafa',
+    lightBackground: '#EEF5FF',
     lightTypography: '#121212'
 }
 

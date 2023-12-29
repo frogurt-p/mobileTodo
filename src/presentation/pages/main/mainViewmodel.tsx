@@ -22,8 +22,6 @@ const mainViewmodel = () => {
         }
     })
 
-    console.log(data)
-
     return {
         data: data || [],
         createTask,

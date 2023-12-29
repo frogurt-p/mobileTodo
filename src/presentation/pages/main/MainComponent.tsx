@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StatusBar, StyleProp, Text, TextComponent, View, ViewStyle } from "react-native";
+import { ActivityIndicator, SafeAreaView, ScrollView, StatusBar, StyleProp, Text, TextComponent, View, ViewStyle } from "react-native";
 import colorScheme from "../../../utils/colorScheme";
 import getDarkScheme from "../../../utils/getDarkScheme";
 import { MainViewmodelType } from "./mainViewmodel"
@@ -32,7 +32,13 @@ const MainComponent = ({ viewmodel }:MainComponentProps) => {
     alignItems: 'center',
   }
 
-  if(viewmodel.isLoading) return null
+  if(viewmodel.isLoading) return (
+    <SafeAreaView style={backgroundStyle}>
+      <View style={emptyStateStyle} >
+        <ActivityIndicator size='large' />
+      </View>
+    </SafeAreaView>
+  )
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -43,8 +49,7 @@ const MainComponent = ({ viewmodel }:MainComponentProps) => {
         <AppHeader/>
         {viewmodel.data.length === 0 && 
         <View style={emptyStateStyle}>
-          <CustomText label="No task to display, create one?" />
-          <ButtonComponent label="Create" onClick={()=> viewmodel.createTask()} />
+          <ButtonComponent overrideButtonStyle={{width:1000, backgroundColor: isDarkMode.backgroundColor}} textStyle={{color: isDarkMode.typographyColor}} label="No task to display, click here to create" onClick={()=> viewmodel.createTask()} />
         </View>}
 
         <View

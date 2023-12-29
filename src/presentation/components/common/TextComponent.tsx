@@ -9,7 +9,7 @@ type TextComponentProps = {
 
 const CustomText = ({label, overrideColor, ...rest}:TextComponentProps) => {
     const color = getDarkScheme()
-    return <Text style={{color: overrideColor ? overrideColor : color.typographyColor, ...rest}}>{label}</Text>
+    return <Text style={{ fontFamily: 'Inter-Regular', color: overrideColor ? overrideColor : color.typographyColor, ...rest}}>{label}</Text>
 
 }
 

@@ -7,7 +7,6 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import colorScheme from "../../../utils/colorScheme";
 type CheckmarkProps = {
     checked:boolean;
-    description:string;
 }
 
 const style: StyleProp<ViewStyle> = {
@@ -15,17 +14,19 @@ const style: StyleProp<ViewStyle> = {
     flexDirection: 'row'
 }
 
-const TodoCheckbox = ({checked, description}:CheckmarkProps) => {
+const TodoCheckbox = ({checked}:CheckmarkProps) => {
     const {typographyColor, backgroundColor} = getDarkScheme()
     const [checkboxChecked, setCheckboxChecked] = useState(checked)
 
     return (
         <View style={style}>
             <BouncyCheckbox
-                size={25}
+                size={30}
                 fillColor={typographyColor}
                 iconComponent={<FontAwesomeIcon icon={faCheck} color={backgroundColor} />}
-                text={description}
+                innerIconStyle={{borderRadius: 10}}
+                iconStyle={{borderRadius:10}}
+                disableText={true}
                 textStyle={{color:typographyColor}}
                 isChecked={checkboxChecked}
             />

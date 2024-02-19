@@ -18,4 +18,8 @@ export default class TodoUsecase implements TodoRepository {
         return this.repository.removeTables()
     }
 
+    removeTodo(data: TodoModel.Request.DeleteTodo): Promise<void> {
+        return this.repository.removeTodo(data)
+    }
+
 }

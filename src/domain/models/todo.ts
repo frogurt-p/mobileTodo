@@ -1,6 +1,8 @@
 export namespace TodoModel {
     export namespace Request {
-
+        export interface DeleteTodo {
+            todoId:number;
+        }
     }
 
     export namespace Response {

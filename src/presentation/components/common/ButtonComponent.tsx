@@ -8,7 +8,9 @@ const buttonStyle:StyleProp<ViewStyle> = {
     width: 100,
     justifyContent:'center',
     alignItems:'center',
-    borderRadius: 20
+    borderRadius: 20,
+    flexDirection:'row',
+    gap: 5
 }
 
 type ButtonProps = {
@@ -16,13 +18,15 @@ type ButtonProps = {
     onClick: ()=> void;
     overrideButtonStyle?: ViewStyle;
     textStyle?: TextStyle;
+    icon?: JSX.Element
 }
  
-const ButtonComponent = ({label, onClick, overrideButtonStyle, textStyle}:ButtonProps) => {
+const ButtonComponent = ({ icon, label, onClick, overrideButtonStyle, textStyle}:ButtonProps) => {
     const {typographyColor, backgroundColor} = getDarkScheme()
     return (
     <TouchableOpacity onPress={onClick}>
-        <View style={{...buttonStyle, backgroundColor: typographyColor, ...overrideButtonStyle}} >
+        <View style={{...buttonStyle, backgroundColor: typographyColor, ...overrideButtonStyle}}>
+            {icon}
             <CustomText color={backgroundColor} {...textStyle} label={label} />    
         </View>
     </TouchableOpacity>

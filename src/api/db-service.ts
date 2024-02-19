@@ -1,6 +1,7 @@
 import { ResultSet, SQLiteDatabase, enablePromise, openDatabase } from "react-native-sqlite-storage";
 import { TodoModel } from "../domain/models/todo";
 import dayjs from "dayjs";
+import { TaskModel } from "../domain/models/task";
 
 enablePromise(true)
 
@@ -87,6 +88,39 @@ export const createTodo = async (db:SQLiteDatabase): Promise<Boolean> => {
     } catch (error) {
         console.error(error)
         throw new Error('Failed creating todo')
+    }
+}
+
+export const createTask = async (db:SQLiteDatabase, {todoId}:TaskModel.Request.Create): Promise<void> => {
+    try {
+        let currentId = 1
+        const latestTaskId = await db.executeSql(`SELECT MAX(taskId) AS latestId FROM task WHERE todoId = ${todoId}`)
+        if(latestTaskId[0].rows.item(0).latestId) {
+            currentId = Number(latestTaskId[0].rows.item(0).latestId) + 1
+        }
+        await db.executeSql(`INSERT INTO task VALUES(${currentId}, ${todoId}, 'New Task', 'false')`)
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed creating task')
+    }
+}
+
+export const checkUncheckTask = async (db:SQLiteDatabase, {checked, taskId, todoId}:TaskModel.Request.CheckUncheck): Promise<void> => {
+    try {
+        await db.executeSql(`UPDATE task SET taskChecked = '${checked}' WHERE taskId = ${taskId} AND todoId = ${todoId}`)
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed updating task')
+    }
+}
+
+export const deleteTodo = async (db:SQLiteDatabase, {todoId}:TodoModel.Request.DeleteTodo) => {
+    try {
+        await db.executeSql(`DELETE FROM todo WHERE todoId=${todoId}`)
+        await db.executeSql(`DELETE FROM task WHERE todoId=${todoId}`)
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed deleting todos')
     }
 }
 

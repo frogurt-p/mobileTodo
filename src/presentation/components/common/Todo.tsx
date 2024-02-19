@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleProp, Text, TextStyle, View, ViewStyle } from "react-native"
+import React, { useState } from "react";
+import { Dimensions, StyleProp, Text, TextStyle, View, ViewStyle } from "react-native"
 import getDarkScheme from "../../../utils/getDarkScheme";
 import TodoCheckbox from "./TodoCheckbox";
 import { TodoModel } from "../../../domain/models/todo";
@@ -7,16 +7,27 @@ import CustomText from "./TextComponent";
 import dayjs from "dayjs";
 import IconButton from "./IconButton";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import ButtonComponent from "./ButtonComponent";
+import colorScheme from "../../../utils/colorScheme";
+import { TaskModel } from "../../../domain/models/task";
 
 export interface TodoProps extends TodoModel.Response.ListData {
-
+    onCreateTask: () => void;
+    onDeleteTodo: () => void;
+    onCheckUncheck: (data:boolean, taskId:number) => void;
 }
 
+const textStyle:StyleProp<TextStyle> = {
+    fontSize: 24,
+}
 
-
-const TodoComponent = ({title, task, createdDate}:TodoProps) => {
+const actionButtonStyle: StyleProp<ViewStyle> = {
+}
+const TodoComponent = ({title, task, onCreateTask, onDeleteTodo, onCheckUncheck}:TodoProps) => {
+    const deviceWidth = Dimensions.get('window').width
     const {backgroundColor, typographyColor} = getDarkScheme()
+    const [isAction, setIsAction] = useState(false)
     const todoStyle:StyleProp<ViewStyle> = {
         backgroundColor: backgroundColor,
         paddingHorizontal: 10,
@@ -24,30 +35,41 @@ const TodoComponent = ({title, task, createdDate}:TodoProps) => {
         borderWidth: 1,
         borderStartColor: backgroundColor,
         borderEndColor: backgroundColor,
-        borderColor: typographyColor
+        borderColor: typographyColor,
     }
-
-    const textStyle:StyleProp<TextStyle> = {
-        fontSize: 24
-    }
-    
 
     return (
         <View style={todoStyle}>
-            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                <CustomText label={title} {...textStyle} /> 
-                <IconButton icon={<FontAwesomeIcon icon={faPencil} size={20} color={typographyColor}/>} onClick={()=>console.log('asd')} />
-            </View>
-            
+            <CustomText label={title} {...textStyle} /> 
             <CustomText label={dayjs().toString()} fontFamily="Inter-ExtraLight" paddingBottom={10} />
-            {task.map((item) => {
-                return (
-                    <View key={item.taskId} style={{flexDirection:'row', alignItems:'center', gap:10}}>
-                        <TodoCheckbox checked={item.taskChecked === 'true'}/>
-                        <CustomText label={item.taskDescription} fontFamily="Inter-Light" textDecorationLine={item.taskChecked === 'true' ? 'line-through' : 'none'} />
-                    </View>
-                )
-            })}            
+            <View style={{gap: 10}}>
+                {task.map((item) => {
+                    return (
+                        <View key={item.taskId} style={{flexDirection:'row', alignItems:'center', gap:10}}>
+                            <TodoCheckbox checked={item.taskChecked === 'true' ? true : false} onPress={(data)=>onCheckUncheck(data, item.taskId)}/>
+                            <CustomText label={item.taskDescription} fontFamily="Inter-Light" textDecorationLine={item.taskChecked === 'true' ? 'line-through' : 'none'} />
+                        </View>
+                    )
+                })}
+
+            </View>
+            <View style={{alignItems:'center'}}>
+                <IconButton icon={<FontAwesomeIcon icon={ isAction ? faChevronUp : faChevronDown} color={typographyColor}/>} onClick={()=> setIsAction((prevVal) => !prevVal)} />    
+            </View>            
+            <View style={{display: isAction ? 'flex' : 'none', flexDirection: 'row', justifyContent:'center', alignItems:'center', gap: 10}}>
+                <ButtonComponent label="Delete" 
+                                 onClick={onDeleteTodo} 
+                                 overrideButtonStyle={{width: (deviceWidth/2) - 10, height: 50}} 
+                                 icon={<FontAwesomeIcon icon={faTrash} style={{color: colorScheme.error}}/>} 
+                                 textStyle={{color:colorScheme.error, fontFamily: 'Inter-Bold'}}
+                                 />
+                <ButtonComponent label="Add Task" 
+                                 onClick={onCreateTask} 
+                                 overrideButtonStyle={{width: (deviceWidth/2) - 10, height: 50}} 
+                                 icon={<FontAwesomeIcon icon={faPlus} />}
+                                 textStyle={{fontFamily:'Inter-Bold'}}
+                                 />
+            </View>
         </View>
     )
 }

@@ -1,12 +1,11 @@
 import { StyleProp, Text, View, ViewStyle } from "react-native";
 import getDarkScheme from "../../../utils/getDarkScheme";
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import colorScheme from "../../../utils/colorScheme";
 type CheckmarkProps = {
     checked:boolean;
+    onPress: (data:boolean) => void;
 }
 
 const style: StyleProp<ViewStyle> = {
@@ -14,10 +13,8 @@ const style: StyleProp<ViewStyle> = {
     flexDirection: 'row'
 }
 
-const TodoCheckbox = ({checked}:CheckmarkProps) => {
+const TodoCheckbox = ({checked, onPress}:CheckmarkProps) => {
     const {typographyColor, backgroundColor} = getDarkScheme()
-    const [checkboxChecked, setCheckboxChecked] = useState(checked)
-
     return (
         <View style={style}>
             <BouncyCheckbox
@@ -28,7 +25,9 @@ const TodoCheckbox = ({checked}:CheckmarkProps) => {
                 iconStyle={{borderRadius:10}}
                 disableText={true}
                 textStyle={{color:typographyColor}}
-                isChecked={checkboxChecked}
+                isChecked={checked}
+                disableBuiltInState={true}      
+                onPress={()=> onPress(checked) }
             />
         </View>
     )

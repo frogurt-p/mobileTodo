@@ -12,6 +12,7 @@ import ButtonComponent from "./ButtonComponent";
 import colorScheme from "../../../utils/colorScheme";
 import { TaskModel } from "../../../domain/models/task";
 
+
 export interface TodoProps extends TodoModel.Response.ListData {
     onCreateTask: () => void;
     onDeleteTodo: () => void;
@@ -24,7 +25,7 @@ const textStyle:StyleProp<TextStyle> = {
 
 const actionButtonStyle: StyleProp<ViewStyle> = {
 }
-const TodoComponent = ({title, task, onCreateTask, onDeleteTodo, onCheckUncheck}:TodoProps) => {
+const TodoComponent = ({title, task, onCreateTask, onDeleteTodo, onCheckUncheck, createdDate}:TodoProps) => {
     const deviceWidth = Dimensions.get('window').width
     const {backgroundColor, typographyColor} = getDarkScheme()
     const [isAction, setIsAction] = useState(false)
@@ -41,7 +42,7 @@ const TodoComponent = ({title, task, onCreateTask, onDeleteTodo, onCheckUncheck}
     return (
         <View style={todoStyle}>
             <CustomText label={title} {...textStyle} /> 
-            <CustomText label={dayjs().toString()} fontFamily="Inter-ExtraLight" paddingBottom={10} />
+            <CustomText label={dayjs(createdDate).format('DD MMM YYYY HH:mm:ss')} fontFamily="Inter-ExtraLight" paddingBottom={10} />
             <View style={{gap: 10}}>
                 {task.map((item) => {
                     return (

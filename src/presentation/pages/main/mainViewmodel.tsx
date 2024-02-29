@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import TodoAPI from "../../../domain/infrastructure/api/todo"
 import TodoUsecase from "../../../domain/usecase/todo"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -7,11 +7,9 @@ import TaskAPI from "../../../domain/infrastructure/api/task"
 import { TaskModel } from "../../../domain/models/task"
 import { TodoModel } from "../../../domain/models/todo"
 
-
-
-
 const mainViewmodel = () => {
-
+    const [deleteModal, setDeleteModal] =  useState(false)
+    const [currentDeleteTodo, setCurrentDeleteTodo] = useState(0)
     const repo = new TodoUsecase(new TodoAPI())
     const taskRepo = new TaskUsecase(new TaskAPI())
 
@@ -19,6 +17,8 @@ const mainViewmodel = () => {
         queryKey: ['todo'],
         queryFn: ()=> repo.getList()
     })
+
+    console.log(data)
 
     const {mutate:createTask} = useMutation({
         mutationFn: ()=> repo.createTodo(),
@@ -49,8 +49,14 @@ const mainViewmodel = () => {
         mutationFn: (data:TodoModel.Request.DeleteTodo) => repo.removeTodo(data),
         onSuccess: () => {
             refetch()
+            setDeleteModal(false)
         }
     })
+
+    const openModalDelete = ({todoId}: {todoId:number}) => {
+        setDeleteModal(true)
+        setCurrentDeleteTodo(todoId)
+    }
 
     return {
         data: data || [],
@@ -58,7 +64,10 @@ const mainViewmodel = () => {
         createSubTask,
         checkUncheckTask,
         deleteTodo,
-        isLoading
+        isLoading,
+        deleteModal, setDeleteModal,
+        currentDeleteTodo, setCurrentDeleteTodo,
+        openModalDelete
     }
 
 }

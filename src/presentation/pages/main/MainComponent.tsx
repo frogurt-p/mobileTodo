@@ -6,6 +6,8 @@ import AppHeader from "../../components/common/AppHeader";
 import TodoComponent from "../../components/common/Todo";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import ButtonComponent from "../../components/common/ButtonComponent";
+import { ModalComponent } from "../../components/common/Modal";
+import DeleteTodoComponent from "../../components/common/DeleteTodoComponent";
 
 
 type MainComponentProps = {
@@ -41,7 +43,13 @@ const MainComponent = ({ viewmodel }:MainComponentProps) => {
         barStyle={isDarkMode.currentColorScheme ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-        <AppHeader/>
+        <ModalComponent visible={viewmodel.deleteModal}>
+          <View style={{flexDirection:"column"}}>
+            <ModalComponent.Title title="Are you sure to delete this todo?" onClose={()=> viewmodel.setDeleteModal(false)}/>
+            <DeleteTodoComponent onClick={()=> viewmodel.deleteTodo({todoId: viewmodel.currentDeleteTodo})}/>
+          </View>
+        </ModalComponent>
+        <AppHeader addTodo={viewmodel.createTask} />
         {viewmodel.data.length === 0 && 
         <View style={emptyStateStyle}>
           <ButtonComponent overrideButtonStyle={{width:'auto', backgroundColor: isDarkMode.backgroundColor}} textStyle={{color: isDarkMode.typographyColor}} label="No task to display, click here to create" onClick={()=> viewmodel.createTask()} />
@@ -62,7 +70,7 @@ const MainComponent = ({ viewmodel }:MainComponentProps) => {
                                               viewmodel.checkUncheckTask({checked: String(data) as any, todoId: item.todoId, taskId: taskId })
                                               console.log(data, taskId)
                                             }}
-                                            onDeleteTodo={()=> viewmodel.deleteTodo({todoId: item.todoId})}
+                                            onDeleteTodo={()=> viewmodel.openModalDelete({todoId: item.todoId})}
                                             />))}
         </View>
     </SafeAreaView>

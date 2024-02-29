@@ -79,7 +79,7 @@ export const createTodo = async (db:SQLiteDatabase): Promise<Boolean> => {
             currentId = Number(latestTableId[0].rows.item(0).latestId) + 1
         } 
         
-        const curDate = dayjs().format('DD-MM-YYYY HH:mm:ss')
+        const curDate = dayjs().format('YYYY-MM-DD HH:mm:ss')
         const createTable = await db.executeSql(`INSERT INTO todo VALUES(${currentId}, '${curDate}', 'New Todo')`)
         const createTask = await db.executeSql(`INSERT INTO task VALUES(1, ${currentId}, 'New Task', 'false')`)
 

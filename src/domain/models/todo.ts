@@ -3,6 +3,11 @@ export namespace TodoModel {
         export interface DeleteTodo {
             todoId:number;
         }
+
+        export interface UpdateTodo {
+            title:string;
+            todoId:number;
+        }
     }
 
     export namespace Response {

@@ -1,4 +1,4 @@
-import { checkUncheckTask, createTable, createTask, getDBConnection } from "../../../api/db-service";
+import { checkUncheckTask, createTable, createTask, getDBConnection, updateTask } from "../../../api/db-service";
 import { TaskModel } from "../../models/task";
 import TaskRepo from "../../repository/task";
 
@@ -24,6 +24,16 @@ export default class TaskAPI implements TaskRepo {
         } catch (error:any) {
             console.error(error)
             throw new Error(error || 'Unknown Error')
+        }    
+    }
+
+    async updateTaskDescription(data: TaskModel.Request.Update): Promise<void> {
+        const db = await getDBConnection()
+        try {
+            return await updateTask(db, {...data})
+        } catch (error:any) {
+            console.error(error)
+            throw new Error(error || 'unknown Error')
         }    
     }
 }

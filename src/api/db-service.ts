@@ -91,6 +91,16 @@ export const createTodo = async (db:SQLiteDatabase): Promise<Boolean> => {
     }
 }
 
+export const updateTodo = async (db:SQLiteDatabase, {title, todoId}:TodoModel.Request.UpdateTodo): Promise<Boolean> => {
+    try {   
+        const updateTodo = await db.executeSql(`UPDATE todo SET title = '${title}' WHERE todoId = ${todoId} `)
+        return true
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed updating todo')
+    }
+}
+
 export const createTask = async (db:SQLiteDatabase, {todoId}:TaskModel.Request.Create): Promise<void> => {
     try {
         let currentId = 1
@@ -111,6 +121,15 @@ export const checkUncheckTask = async (db:SQLiteDatabase, {checked, taskId, todo
     } catch (error) {
         console.error(error)
         throw new Error('Failed updating task')
+    }
+}
+
+export const updateTask = async (db:SQLiteDatabase, {taskId, todoId, updateText}:TaskModel.Request.Update) => {
+    try {
+        await db.executeSql(`UPDATE task SET taskDescription = '${updateText}' WHERE taskId = ${taskId} AND todoId = ${todoId}`)
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed updating task description')
     }
 }
 

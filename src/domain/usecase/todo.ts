@@ -22,4 +22,8 @@ export default class TodoUsecase implements TodoRepository {
         return this.repository.removeTodo(data)
     }
 
+    updateTodo(data: TodoModel.Request.UpdateTodo): Promise<Boolean> {
+        return this.repository.updateTodo(data)
+    }
+
 }

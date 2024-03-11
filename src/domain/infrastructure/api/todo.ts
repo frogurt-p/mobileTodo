@@ -1,4 +1,4 @@
-import { createTable, createTodo, deleteTodo, getDBConnection, getTodo, nukeTables } from "../../../api/db-service";
+import { createTable, createTodo, deleteTodo, getDBConnection, getTodo, nukeTables, updateTodo } from "../../../api/db-service";
 import { TodoModel } from "../../models/todo";
 import TodoRepository from "../../repository/todo";
 
@@ -45,6 +45,16 @@ export default class TodoAPI implements TodoRepository {
         } catch (error:any) {
             console.error(error)
             throw new Error(error || 'Unknown Error')
+        }    
+    }
+
+    async updateTodo(data: TodoModel.Request.UpdateTodo): Promise<Boolean> {
+        const db = await getDBConnection()
+        try {
+            return await updateTodo(db, {todoId: data.todoId, title: data.title})
+        } catch (error:any) {
+            console.error(error)
+            throw new Error(error || 'unknown Error')
         }    
     }
 }

@@ -5,4 +5,5 @@ export default interface TodoRepository {
     createTodo(): Promise<Boolean>
     removeTables(): Promise<Boolean>
     removeTodo(data:TodoModel.Request.DeleteTodo): Promise<void>
+    updateTodo(data:TodoModel.Request.UpdateTodo): Promise<Boolean>
 }

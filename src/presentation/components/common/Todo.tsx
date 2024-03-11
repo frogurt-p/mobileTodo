@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dimensions, StyleProp, Text, TextStyle, View, ViewStyle } from "react-native"
+import { Dimensions, Pressable, StyleProp, TextStyle, Touchable, View, ViewStyle } from "react-native"
 import getDarkScheme from "../../../utils/getDarkScheme";
 import TodoCheckbox from "./TodoCheckbox";
 import { TodoModel } from "../../../domain/models/todo";
@@ -11,12 +11,16 @@ import { faChevronDown, faChevronUp, faPlus, faTrash } from "@fortawesome/free-s
 import ButtonComponent from "./ButtonComponent";
 import colorScheme from "../../../utils/colorScheme";
 import { TaskModel } from "../../../domain/models/task";
+import CustomTextInput from "./TextInputComponent";
+import Task from "./Task";
 
 
 export interface TodoProps extends TodoModel.Response.ListData {
     onCreateTask: () => void;
     onDeleteTodo: () => void;
     onCheckUncheck: (data:boolean, taskId:number) => void;
+    onRenameTodo: (title:string) => void;
+    onUpdate: (textDescription:string, taskId:number) => void;
 }
 
 const textStyle:StyleProp<TextStyle> = {
@@ -25,7 +29,7 @@ const textStyle:StyleProp<TextStyle> = {
 
 const actionButtonStyle: StyleProp<ViewStyle> = {
 }
-const TodoComponent = ({title, task, onCreateTask, onDeleteTodo, onCheckUncheck, createdDate}:TodoProps) => {
+const TodoComponent = ({title, task, onCreateTask, onDeleteTodo, onCheckUncheck, onRenameTodo, createdDate, onUpdate}:TodoProps) => {
     const deviceWidth = Dimensions.get('window').width
     const {backgroundColor, typographyColor} = getDarkScheme()
     const [isAction, setIsAction] = useState(false)
@@ -41,16 +45,12 @@ const TodoComponent = ({title, task, onCreateTask, onDeleteTodo, onCheckUncheck,
 
     return (
         <View style={todoStyle}>
-            <CustomText label={title} {...textStyle} /> 
+            {/* <CustomText label={title} {...textStyle} />  */}
+            <CustomTextInput value={title} onEnter={({nativeEvent})=>onRenameTodo(nativeEvent.text)} fontSize={24}/>
             <CustomText label={dayjs(createdDate).format('DD MMM YYYY HH:mm:ss')} fontFamily="Inter-ExtraLight" paddingBottom={10} />
             <View style={{gap: 10}}>
                 {task.map((item) => {
-                    return (
-                        <View key={item.taskId} style={{flexDirection:'row', alignItems:'center', gap:10}}>
-                            <TodoCheckbox checked={item.taskChecked === 'true' ? true : false} onPress={(data)=>onCheckUncheck(data, item.taskId)}/>
-                            <CustomText label={item.taskDescription} fontFamily="Inter-Light" textDecorationLine={item.taskChecked === 'true' ? 'line-through' : 'none'} />
-                        </View>
-                    )
+                    return <Task key={item.taskId} item={item} onUpdate={onUpdate} onCheckUncheck={onCheckUncheck}/>
                 })}
 
             </View>

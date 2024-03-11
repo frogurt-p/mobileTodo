@@ -12,4 +12,8 @@ export default class TaskUsecase implements TaskRepo {
     async checkUncheckTask(data: TaskModel.Request.CheckUncheck): Promise<void> {
         return this.repo.checkUncheckTask(data)    
     }
+
+    async updateTaskDescription(data: TaskModel.Request.Update): Promise<void> {
+        return this.repo.updateTaskDescription(data)    
+    }
 }

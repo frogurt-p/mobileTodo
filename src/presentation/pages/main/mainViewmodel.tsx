@@ -45,11 +45,25 @@ const mainViewmodel = () => {
         }
     })
 
+    const {mutate: updateTaskDescription} = useMutation({
+        mutationFn: (data:TaskModel.Request.Update) => taskRepo.updateTaskDescription(data),
+        onSuccess: () => {
+            refetch()
+        }
+    })
+
     const {mutate: deleteTodo} = useMutation({
         mutationFn: (data:TodoModel.Request.DeleteTodo) => repo.removeTodo(data),
         onSuccess: () => {
             refetch()
             setDeleteModal(false)
+        }
+    })
+
+    const {mutate:updateTodo} = useMutation({
+        mutationFn: (data:TodoModel.Request.UpdateTodo) => repo.updateTodo(data),
+        onSuccess: () => {
+            refetch()
         }
     })
 
@@ -64,10 +78,12 @@ const mainViewmodel = () => {
         createSubTask,
         checkUncheckTask,
         deleteTodo,
+        updateTodo,
         isLoading,
         deleteModal, setDeleteModal,
         currentDeleteTodo, setCurrentDeleteTodo,
-        openModalDelete
+        openModalDelete,
+        updateTaskDescription
     }
 
 }

@@ -1,4 +1,4 @@
-import { ActivityIndicator, Dimensions, SafeAreaView, ScrollView, StatusBar, StyleProp, Text, TextComponent, View, ViewStyle } from "react-native";
+import { ActivityIndicator, Dimensions, FlatList, Keyboard, Pressable, SafeAreaView, ScrollView, StatusBar, StyleProp, Text, TextComponent, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 import colorScheme from "../../../utils/colorScheme";
 import getDarkScheme from "../../../utils/getDarkScheme";
 import { MainViewmodelType } from "./mainViewmodel"
@@ -20,7 +20,7 @@ const MainComponent = ({ viewmodel }:MainComponentProps) => {
 
   const backgroundStyle:StyleProp<ViewStyle> = {
     backgroundColor: isDarkMode.currentColorScheme ? colorScheme.darkBackground : colorScheme.lightBackground,
-    flex: 1
+    flex: 1,
   };
 
   const emptyStateStyle: StyleProp<ViewStyle> = {
@@ -38,42 +38,62 @@ const MainComponent = ({ viewmodel }:MainComponentProps) => {
   )
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode.currentColorScheme ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-        <ModalComponent visible={viewmodel.deleteModal}>
-          <View style={{flexDirection:"column"}}>
-            <ModalComponent.Title title="Are you sure to delete this todo?" onClose={()=> viewmodel.setDeleteModal(false)}/>
-            <DeleteTodoComponent onClick={()=> viewmodel.deleteTodo({todoId: viewmodel.currentDeleteTodo})}/>
-          </View>
-        </ModalComponent>
-        <AppHeader addTodo={viewmodel.createTask} />
-        {viewmodel.data.length === 0 && 
-        <View style={emptyStateStyle}>
-          <ButtonComponent overrideButtonStyle={{width:'auto', backgroundColor: isDarkMode.backgroundColor}} textStyle={{color: isDarkMode.typographyColor}} label="No task to display, click here to create" onClick={()=> viewmodel.createTask()} />
-        </View>}
+    // <SafeAreaView style={backgroundStyle}>
+      <Pressable onPress={()=>Keyboard.dismiss()} accessible={false} style={{flex:1}}>
+        <View style={backgroundStyle}>
+        <StatusBar
+          barStyle={isDarkMode.currentColorScheme ? 'light-content' : 'dark-content'}
+          backgroundColor={backgroundStyle.backgroundColor}
+        />
+          <ModalComponent visible={viewmodel.deleteModal}>
+            <View style={{flexDirection:"column"}}>
+              <ModalComponent.Title title="Are you sure to delete this todo?" onClose={()=> viewmodel.setDeleteModal(false)}/>
+              <DeleteTodoComponent onClick={()=> viewmodel.deleteTodo({todoId: viewmodel.currentDeleteTodo})}/>
+            </View>
+          </ModalComponent>
+          <AppHeader addTodo={viewmodel.createTask} />
+          {viewmodel.data.length === 0 && 
+          <View style={emptyStateStyle}>
+            <ButtonComponent overrideButtonStyle={{width:'auto', backgroundColor: isDarkMode.backgroundColor}} textStyle={{color: isDarkMode.typographyColor}} label="No task to display, click here to create" onClick={()=> viewmodel.createTask()} />
+          </View>}
 
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-            {viewmodel.data.map((item) => (<TodoComponent 
-                                            todoId={item.todoId} 
-                                            key={item.todoId} 
-                                            createdDate={item.createdDate} 
-                                            title={item.title} 
-                                            task={item.task} 
-                                            onCreateTask={()=> viewmodel.createSubTask({todoId: item.todoId}) }
-                                            onCheckUncheck={(data:boolean, taskId:number)=> {
-                                              viewmodel.checkUncheckTask({checked: String(data) as any, todoId: item.todoId, taskId: taskId })
-                                              console.log(data, taskId)
-                                            }}
-                                            onDeleteTodo={()=> viewmodel.openModalDelete({todoId: item.todoId})}
-                                            />))}
+          <FlatList
+            data={viewmodel.data}
+            renderItem={({item})=> <TodoComponent
+            todoId={item.todoId} 
+            key={item.todoId} 
+            createdDate={item.createdDate} 
+            title={item.title} 
+            task={item.task} 
+            onCreateTask={()=> viewmodel.createSubTask({todoId: item.todoId}) }
+            onCheckUncheck={(data:boolean, taskId:number)=> {
+              viewmodel.checkUncheckTask({checked: String(data) as any, todoId: item.todoId, taskId: taskId })
+              console.log(data, taskId)
+            }}
+            onUpdate={(desc, taskId)=> viewmodel.updateTaskDescription({todoId: item.todoId, taskId: taskId, updateText: desc})}
+            onRenameTodo={((title)=> viewmodel.updateTodo({title, todoId: item.todoId}))}
+            onDeleteTodo={()=> viewmodel.openModalDelete({todoId: item.todoId})}
+            />}
+          />
+
+              {/* {viewmodel.data.map((item) => (<TodoComponent 
+                                              todoId={item.todoId} 
+                                              key={item.todoId} 
+                                              createdDate={item.createdDate} 
+                                              title={item.title} 
+                                              task={item.task} 
+                                              onCreateTask={()=> viewmodel.createSubTask({todoId: item.todoId}) }
+                                              onCheckUncheck={(data:boolean, taskId:number)=> {
+                                                viewmodel.checkUncheckTask({checked: String(data) as any, todoId: item.todoId, taskId: taskId })
+                                                console.log(data, taskId)
+                                              }}
+                                              onUpdate={(desc, taskId)=> viewmodel.updateTaskDescription({todoId: item.todoId, taskId: taskId, updateText: desc})}
+                                              onRenameTodo={((title)=> viewmodel.updateTodo({title, todoId: item.todoId}))}
+                                              onDeleteTodo={()=> viewmodel.openModalDelete({todoId: item.todoId})}
+                                              />))} */}
         </View>
-    </SafeAreaView>
+      </Pressable>
+    // </SafeAreaView>
   );
 }
 

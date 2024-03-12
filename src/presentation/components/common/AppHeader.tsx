@@ -16,7 +16,7 @@ const AppHeader = ({addTodo}:AppHeaderType) => {
     return (
         <View style={{justifyContent:'space-between', flexDirection:'row', paddingHorizontal:15}}>
             <Text style={{fontSize:32, color: typographyColor}}>
-                MY todos
+                Todo App
             </Text>
             <IconButton icon={<FontAwesomeIcon icon={faAdd} color={typographyColor}  />} onClick={addTodo} />
         </View>

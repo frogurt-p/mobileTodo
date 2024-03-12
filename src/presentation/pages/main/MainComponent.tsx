@@ -68,7 +68,7 @@ const MainComponent = ({ viewmodel }:MainComponentProps) => {
             onCreateTask={()=> viewmodel.createSubTask({todoId: item.todoId}) }
             onCheckUncheck={(data:boolean, taskId:number)=> {
               viewmodel.checkUncheckTask({checked: String(data) as any, todoId: item.todoId, taskId: taskId })
-              console.log(data, taskId)
+              console.log(data, taskId) 
             }}
             onUpdate={(desc, taskId)=> viewmodel.updateTaskDescription({todoId: item.todoId, taskId: taskId, updateText: desc})}
             onRenameTodo={((title)=> viewmodel.updateTodo({title, todoId: item.todoId}))}

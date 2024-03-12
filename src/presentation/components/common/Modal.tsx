@@ -51,11 +51,13 @@ export const ModalComponent = ({children, visible}:ModalProps) => {
     
 }
 
-const ModalComponentTitle = ({title, onClose}: ModalTitleProps) => (
+const ModalComponentTitle = ({title, onClose}: ModalTitleProps) => {
+    const color = getDarkScheme()
+    return (
     <View style={styles.title}>
         <CustomText label={title} textAlign="center" fontSize={24} flexBasis={270} paddingLeft={30}/>
-        <IconButton icon={<FontAwesomeIcon icon={faXmark} color='#FFFFFF' size={24}/>} onClick={onClose}/>
-    </View>
-)
+        <IconButton icon={<FontAwesomeIcon icon={faXmark} color={color.typographyColor} size={24}/>} onClick={onClose}/>
+    </View>)
+}
 
 ModalComponent.Title = ModalComponentTitle
